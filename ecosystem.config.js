@@ -2,7 +2,9 @@ module.exports = {
     apps: [
         {
             name: 'UPLOADSERVER',
-            script: './src/index.ts',
+            script: 'npm',
+            args: 'run start',
+            interpreter: 'none',
         }
     ]
 }
