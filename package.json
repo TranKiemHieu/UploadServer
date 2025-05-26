@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
     "dev": "node ./build/src/index.js",
-    "start": "tsc && npm run dev"
+    "start": "npm run build && npm run dev"
   },
   "keywords": [],
   "author": "",
