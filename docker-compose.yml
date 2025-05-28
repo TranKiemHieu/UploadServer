@@ -1,15 +1,49 @@
+version: '3'
 services:
-  app: #network
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-      args:
-        NODE_VERSION: 18
-        PORT: 8080
+    image: app
+    container_name: app
+    restart: unless-stopped
+    networks:
+      - app-network
+  webserver:
+    image: nginx:mainline-alpine
+    container_name: webserver
+    restart: unless-stopped
     ports:
-      - "8080:8080"
+      - "80:80"
+      - "443:443"
     volumes:
-      - ./:/app
-      - /app/node_modules
-    env_file:
-      - .env
+      - ./nginx-conf:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      - app
+    networks:
+      - app-network
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      - webserver
+    command: certonly --webroot --webroot-path=/var/www/html --email tkiemhieu@gmail.com --agree-tos --no-eff-email --staging -d api.dimori.net
+networks:
+  app-network:
+    driver: bridge
+volumes:
+  certbot-etc:
+  certbot-var:
+  web-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: /root/app/UploadServer/src/
+      o: bind

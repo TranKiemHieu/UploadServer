@@ -1,4 +1,3 @@
-ARG NODE_VERSION
 FROM node:18-alpine
 
 WORKDIR /app
@@ -9,7 +8,6 @@ RUN npm install
 
 COPY . .
 
-ARG APORT
 EXPOSE 8080
 
 CMD ["npm", "run", "start"]
